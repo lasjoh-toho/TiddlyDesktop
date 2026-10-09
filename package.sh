@@ -25,6 +25,8 @@ package_mac() {
 local name="$1"
 local folder="TiddlyDesktop-$name-v$VERSION"
 pushd "./output/$name"
+# Some files in the nw.js framework are read only, which stops users from clearing the quarantine flag
+sudo chmod -R u+w "./$folder/TiddlyDesktop.app"
 sudo xattr -rc "./$folder/TiddlyDesktop.app"
 sudo codesign --force --deep --sign - "./$folder/TiddlyDesktop.app"
 codesign --verify --deep --strict "./$folder/TiddlyDesktop.app" || exit 1
