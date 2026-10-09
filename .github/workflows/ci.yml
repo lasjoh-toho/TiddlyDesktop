@@ -42,6 +42,7 @@ jobs:
             platform-for-pkg: macapplesilicon
             runs-on: macos-latest
     runs-on: ${{ matrix.runs-on }}
+    timeout-minutes: 45
     name: "Build ${{ matrix.platform-for-pkg }}"
     steps:
       - name: "💾 Checking out repository code..."

@@ -29,10 +29,17 @@ sudo xattr -rc "./$folder/TiddlyDesktop.app"
 sudo codesign --force --deep --sign - "./$folder/TiddlyDesktop.app"
 codesign --verify --deep --strict "./$folder/TiddlyDesktop.app" || exit 1
 zip --symlinks -r "../tiddlydesktop-$name-v$VERSION.zip" *
-# Add a link to /Applications so the app can be installed by dragging it across
-ln -s /Applications "./$folder/Applications"
-hdiutil create -volname "TiddlyDesktop" -srcfolder "./$folder" -ov -format UDZO "../tiddlydesktop-$name-v$VERSION.dmg" || exit 1
-rm "./$folder/Applications"
+# Build the disk image from a folder that only contains the app. The link to /Applications is
+# added to the mounted image afterwards, otherwise hdiutil would copy the whole Applications folder
+rm -rf dmg-staging dmg-mount dmg-rw.dmg
+mkdir dmg-staging dmg-mount
+ditto "./$folder/TiddlyDesktop.app" "dmg-staging/TiddlyDesktop.app"
+hdiutil create -volname "TiddlyDesktop" -srcfolder dmg-staging -fs HFS+ -format UDRW -ov dmg-rw.dmg || exit 1
+hdiutil attach dmg-rw.dmg -nobrowse -noautoopen -mountpoint dmg-mount || exit 1
+ln -s /Applications dmg-mount/Applications
+hdiutil detach dmg-mount || hdiutil detach -force dmg-mount || exit 1
+hdiutil convert dmg-rw.dmg -format UDZO -ov -o "../tiddlydesktop-$name-v$VERSION.dmg" || exit 1
+rm -rf dmg-staging dmg-mount dmg-rw.dmg
 popd
 }
 
