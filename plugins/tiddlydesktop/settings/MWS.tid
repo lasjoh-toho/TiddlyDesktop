@@ -1,0 +1,29 @@
+title: $:/TiddlyDesktop/Settings/MWS
+caption: MWS Servers
+tags: $:/TiddlyDesktop/Settings
+
+Settings for managing ~MultiWikiServer instances. See [[MWS servers|$:/TiddlyDesktop/Help/MWS]] in the help for details.
+
+!! Node.js folder
+
+~TiddlyDesktop runs `node`, `npm`, `ssh` and `scp` from the system path. If Node.js is installed somewhere else (for example a portable installation), enter the folder that contains the `node` and `npm` executables:
+
+<$edit-text tiddler="$:/TiddlyDesktop/MWS/Config/NodeFolder" class="td-big-textarea" tag="input" placeholder="use the system path"/>
+
+<$button message="tm-mws-check-environment">Check Node.js</$button>
+Found: Node.js <$text text={{{ [[$:/temp/TiddlyDesktop/MWS/Environment]get[node]else[not found]] }}}/>, npm <$text text={{{ [[$:/temp/TiddlyDesktop/MWS/Environment]get[npm]else[not found]] }}}/>
+
+!! Backup folder
+
+Backups are stored in a subfolder per server. Leave empty to use the `mws-backups` folder inside the ~TiddlyDesktop configuration folder. Choose a folder on another drive, a NAS or a synchronised cloud folder to protect against disk failure.
+
+<$edit-text tiddler="$:/TiddlyDesktop/MWS/Config/BackupFolder" class="td-big-textarea" tag="input" placeholder="default: mws-backups in the configuration folder"/>
+
+<div class="td-file-input-wrapper">
+<$button>Choose folder…</$button>
+<$browse nwdirectory message="tm-mws-pick-folder" param="$:/TiddlyDesktop/MWS/Config/BackupFolder!!text"/>
+</div>
+<$button>
+<$action-deletetiddler $tiddler="$:/TiddlyDesktop/MWS/Config/BackupFolder"/>
+Reset to default
+</$button>

@@ -1,0 +1,33 @@
+title: MWSServerList
+page-title: TiddlyDesktop -- MWS Servers
+
+<$importvariables filter="[[$:/core/ui/PageMacros]] [all[shadows+tiddlers]tag[$:/tags/Macro]!has[draft.of]]">
+
+<$transclude tiddler="$:/core/ui/PageTemplate/alerts" mode="inline"/>
+
+<$transclude tiddler="MWSServerList/Toolbar" mode="inline"/>
+
+<div class="td-mws">
+
+<$transclude tiddler="MWSServerList/Environment" mode="block"/>
+
+<$transclude tiddler="MWSServerList/Form" mode="block"/>
+
+<div class="td-mws-list">
+<$list filter="[all[tiddlers]tag[$:/tags/TiddlyDesktop/MWSServer]sort[caption]]" emptyMessage="""<div class="td-mws-empty">
+
+No ~MultiWikiServer instances yet.
+
+* ''Install new server'' sets up MWS in a new folder on this computer
+* ''Add existing folder'' manages an MWS data folder that is already on this computer
+* ''SSH server'' installs, backs up and restores MWS on another machine that you can reach with ssh
+* ''Remote URL'' only opens the admin page of a server that is managed elsewhere
+
+</div>""">
+<$transclude tiddler="MWSServerList/Row" mode="block"/>
+</$list>
+</div>
+
+</div>
+
+</$importvariables>

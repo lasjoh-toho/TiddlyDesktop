@@ -1,0 +1,59 @@
+title: MWSServerList/Row/Backups
+
+\whitespace trim
+<div class="td-mws-section">
+<p>
+<$button class="td-button td-mws-primary" message="tm-mws-backup" param=<<id>> disabled=<<isBusy>>>{{$:/core/images/save-button}} Backup now</$button>
+&#32;<$button class="td-button" message="tm-mws-reveal-backups" param=<<id>>>{{$:/core/images/folder}} Open backup folder</$button>
+</p>
+<p class="tc-muted">
+A backup contains the database (<code>store</code>), <code>package.json</code>, <code>package-lock.json</code>, <code>tw5/versions.txt</code> and, if enabled in the settings, <code>passwords.key</code>. The server keeps running while the backup is made.
+</p>
+<$list filter="[all[tiddlers]prefix<backupPrefix>!sort[created]]" emptyMessage="""<p>No backups yet.</p>""" variable="backup">
+<$let backupName={{{ [<backup>get[name]] }}} restoreForm={{{ [<backup>addprefix[$:/temp/TiddlyDesktop/MWS/RestoreForm/]] }}}>
+<div class="td-mws-backup">
+<div class="td-mws-backup-info">
+<strong><$view tiddler=<<backup>> field="created" format="date" template="YYYY-0MM-0DD 0hh:0mm:0ss"/></strong>
+&#32;<span class="tc-muted"><$text text=<<backupName>>/> · MWS <$view tiddler=<<backup>> field="mws-version"/>
+<$list filter="[<backup>get[includes-passwords-key]match[no]]" variable="ignore"> · without passwords.key</$list>
+</span>
+</div>
+<div class="td-mws-backup-actions">
+<$button class="td-button" disabled=<<isBusy>>>
+<$action-sendmessage $message="tm-mws-restore" $param=<<id>> backup=<<backupName>>/>
+restore
+</$button>
+<$list filter="[<kind>match[local]] [<kind>match[ssh]] +[limit[1]]" variable="ignore">
+<$button class="td-button" set=<<restoreForm>> setTo="open">restore as new server…</$button>
+</$list>
+<$button class="td-button">
+<$action-sendmessage $message="tm-mws-delete-backup" $param=<<id>> backup=<<backupName>>/>
+delete
+</$button>
+</div>
+<$list filter="[<restoreForm>get[text]match[open]]" variable="ignore">
+<div class="td-mws-restore-form">
+Create a new server on this computer from this backup, eg to move a server to this PC or to test a backup.
+<table class="td-mws-table">
+<tr><th>Location</th><td>
+<div class="td-mws-folder">
+<$text text={{{ [<restoreForm>get[parent]else[(no folder chosen)]] }}}/>
+<div class="td-file-input-wrapper">
+<$button class="td-button">{{$:/core/images/folder}} Choose parent folder</$button>
+<$browse nwdirectory message="tm-mws-pick-folder" param={{{ [<restoreForm>addsuffix[!!parent]] }}}/>
+</div>
+</div>
+</td></tr>
+<tr><th>Data folder name</th><td><$edit-text tiddler=<<restoreForm>> field="folder" tag="input" placeholder="mws-restored" class="td-mws-input"/></td></tr>
+</table>
+<$button class="td-button td-mws-primary">
+<$action-sendmessage $message="tm-mws-restore-as-new" $param=<<id>> backup=<<backupName>> form=<<restoreForm>>/>
+Restore as new server
+</$button>
+&#32;<$button class="td-button"><$action-deletetiddler $tiddler=<<restoreForm>>/>Cancel</$button>
+</div>
+</$list>
+</div>
+</$let>
+</$list>
+</div>

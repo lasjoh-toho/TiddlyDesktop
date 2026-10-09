@@ -1,0 +1,100 @@
+title: MWSServerList/Form
+
+\whitespace trim
+\procedure form() $:/temp/TiddlyDesktop/MWS/Form
+\procedure input(field,placeholder,type:"text")
+<$edit-text tiddler=<<form>> field=<<field>> tag="input" type=<<type>> placeholder=<<placeholder>> class="td-mws-input"/>
+\end
+\procedure folder-picker(field,label)
+<div class="td-mws-folder">
+<$text text={{{ [<form>get<field>else[(no folder chosen)]] }}}/>
+<div class="td-file-input-wrapper">
+<$button class="td-button">{{$:/core/images/folder}} <<label>></$button>
+<$browse nwdirectory message="tm-mws-pick-folder" param={{{ [<form>addsuffix[!!]addsuffix<field>] }}}/>
+</div>
+</div>
+\end
+\procedure host-select()
+<$select tiddler=<<form>> field="host" default="localhost">
+<option value="localhost">only this computer (localhost)</option>
+<option value="0.0.0.0">all network interfaces (0.0.0.0)</option>
+</$select>
+\end
+\procedure cancel()
+<$button class="td-button"><$action-deletetiddler $tiddler=<<form>>/>Cancel</$button>
+\end
+
+<$let mode={{{ [<form>get[mode]] }}}>
+<$list filter="[<mode>!is[blank]]" variable="ignore">
+<div class="td-mws-form">
+
+<$list filter="[<mode>match[install]]" variable="ignore">
+<h2>Install a new MWS server on this computer</h2>
+<p>
+TiddlyDesktop creates the data folder, installs the latest MWS from npm, downloads ~TiddlyWiki and initialises the database. This needs an internet connection and Node.js.
+</p>
+<table class="td-mws-table">
+<tr><th>Name</th><td><$transclude $variable="input" field="caption" placeholder="My wiki server"/></td></tr>
+<tr><th>Location</th><td><$transclude $variable="folder-picker" field="parent" label="Choose parent folder"/></td></tr>
+<tr><th>Data folder name</th><td><$transclude $variable="input" field="folder" placeholder="mws"/></td></tr>
+<tr><th>Accessible from</th><td><<host-select>></td></tr>
+<tr><th>Port</th><td><$transclude $variable="input" field="port" placeholder="automatic (8080, 8081, ...)" type="number"/></td></tr>
+<tr><th></th><td><$checkbox tiddler=<<form>> field="autostart" checked="yes" unchecked="no" default="no"> start the server when ~TiddlyDesktop starts</$checkbox></td></tr>
+</table>
+<$button class="td-button td-mws-primary" message="tm-mws-install" param=<<form>>>Install</$button>
+&#32;<<cancel>>
+</$list>
+
+<$list filter="[<mode>match[existing]]" variable="ignore">
+<h2>Add an existing MWS data folder</h2>
+<p>
+Choose the folder that contains <code>passwords.key</code>, <code>package.json</code> and the <code>store</code> folder.
+</p>
+<table class="td-mws-table">
+<tr><th>Data folder</th><td><$transclude $variable="folder-picker" field="folder" label="Choose folder"/></td></tr>
+<tr><th>Name</th><td><$transclude $variable="input" field="caption" placeholder="(folder name)"/></td></tr>
+<tr><th>Accessible from</th><td><<host-select>></td></tr>
+<tr><th>Port</th><td><$transclude $variable="input" field="port" placeholder="automatic (8080, 8081, ...)" type="number"/></td></tr>
+</table>
+<$button class="td-button td-mws-primary" message="tm-mws-add-existing" param=<<form>>>Add</$button>
+&#32;<<cancel>>
+</$list>
+
+<$list filter="[<mode>match[ssh]]" variable="ignore">
+<h2>Manage MWS on another machine over SSH</h2>
+<p>
+~TiddlyDesktop runs <code>ssh</code> and <code>scp</code> from this computer. Log-in must work without a password prompt, for example with an SSH key loaded into your SSH agent. The remote machine needs Node.js 20 or newer and a POSIX shell (Linux, macOS, BSD).
+</p>
+<table class="td-mws-table">
+<tr><th>Name</th><td><$transclude $variable="input" field="caption" placeholder="My wiki server"/></td></tr>
+<tr><th>SSH target</th><td><$transclude $variable="input" field="ssh-target" placeholder="user@example.org"/></td></tr>
+<tr><th>SSH port</th><td><$transclude $variable="input" field="ssh-port" placeholder="22" type="number"/></td></tr>
+<tr><th>Data folder on the server</th><td><$transclude $variable="input" field="folder" placeholder="mws (relative to the home folder) or /srv/mws"/></td></tr>
+<tr><th>Listen on</th><td><$transclude $variable="input" field="host" placeholder="0.0.0.0"/></td></tr>
+<tr><th>Port</th><td><$transclude $variable="input" field="port" placeholder="8080" type="number"/></td></tr>
+<tr><th>Public URL</th><td><$transclude $variable="input" field="url" placeholder="optional, eg https://wiki.example.org/ behind a reverse proxy"/></td></tr>
+<tr><th>Shell setup</th><td><$transclude $variable="input" field="ssh-prefix" placeholder="optional, eg . ~/.nvm/nvm.sh"/></td></tr>
+<tr><th></th><td><$checkbox tiddler=<<form>> field="install" checked="yes" unchecked="no" default="no"> install MWS into the data folder now (the folder must not exist yet)</$checkbox></td></tr>
+</table>
+<$button class="td-button td-mws-primary" message="tm-mws-add-ssh" param=<<form>>>
+<$list filter="[<form>get[install]match[yes]]" variable="ignore" emptyMessage="Add">Install</$list>
+</$button>
+&#32;<<cancel>>
+</$list>
+
+<$list filter="[<mode>match[remote]]" variable="ignore">
+<h2>Add a remote MWS server by URL</h2>
+<p>
+Remote servers can be opened and monitored. To install, update or back them up from here, add them as an SSH server instead.
+</p>
+<table class="td-mws-table">
+<tr><th>Name</th><td><$transclude $variable="input" field="caption" placeholder="My wiki server"/></td></tr>
+<tr><th>URL</th><td><$transclude $variable="input" field="url" placeholder="https://wiki.example.org/"/></td></tr>
+</table>
+<$button class="td-button td-mws-primary" message="tm-mws-add-remote" param=<<form>>>Add</$button>
+&#32;<<cancel>>
+</$list>
+
+</div>
+</$list>
+</$let>

@@ -1,0 +1,20 @@
+title: MWSServerList/Environment
+
+\whitespace trim
+<$let env="$:/temp/TiddlyDesktop/MWS/Environment">
+<$list filter="[<env>get[node-ok]!match[yes]]" variable="ignore">
+<div class="td-mws-notice td-mws-notice-error">
+<$list filter="[<env>get[node]!is[blank]]" variable="version" emptyMessage="""<strong>Node.js was not found.</strong> MWS needs Node.js 20 or newer on this computer to install and run local servers.""">
+<strong>Node.js <<version>> is too old.</strong> MWS needs Node.js 20 or newer.
+</$list>
+&#32;Install it from <a href="https://nodejs.org/" class="tc-tiddlylink-external">nodejs.org</a>, or set the Node.js folder under <$button class="tc-btn-invisible tc-tiddlylink" message="tiddlydesktop-add-wiki-url" param="backstage://$:/TiddlyDesktop/Settings">Settings</$button>, then&#32;
+<$button class="td-button" message="tm-mws-check-environment">check again</$button>
+</div>
+</$list>
+<div class="td-mws-environment">
+Node.js: <$text text={{{ [<env>get[node]else[not found]] }}}/>
+&#32;· npm: <$text text={{{ [<env>get[npm]else[not found]] }}}/>
+&#32;· ssh: <$text text={{{ [<env>get[ssh]else[not found]] }}}/>
+&#32;<$button class="tc-btn-invisible tc-tiddlylink" message="tm-mws-check-environment">(check again)</$button>
+</div>
+</$let>

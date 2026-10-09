@@ -1,0 +1,66 @@
+title: $:/TiddlyDesktop/Help/MWS
+caption: MWS servers
+tags: $:/TiddlyDesktop/Help
+
+! ~MultiWikiServer
+
+[[MultiWikiServer|https://github.com/TiddlyWiki/MultiWikiServer]] (MWS) serves many wikis to many users from one database. ~TiddlyDesktop can install, run, administer and back up MWS servers from this computer. Open the ''MWS servers'' window from the wiki list toolbar, from the tray menu, or by starting ~TiddlyDesktop with `--mws`.
+
+!! Requirements
+
+* [[Node.js|https://nodejs.org/]] 20 or newer (with npm) on this computer, for local servers
+* An internet connection to install and update MWS and ~TiddlyWiki
+* For SSH servers: the `ssh` and `scp` commands (included in Windows 10 and newer, macOS and Linux), log-in without a password prompt (an SSH key in your SSH agent) and Node.js 20 or newer on the server
+
+If Node.js is installed in an unusual location, set its folder under ''Settings → MWS Servers''.
+
+!! Kinds of servers
+
+|!Kind |!What ~TiddlyDesktop can do |
+|''This computer'' |install, start, stop, open, update, back up, restore |
+|''SSH'' |install, start, stop, open, update, back up to this computer, restore from this computer |
+|''Remote URL'' |open the admin page and check whether the server answers |
+
+!! Installing a server
+
+Click ''Install new server'', choose a parent folder, a name for the data folder and a port. ~TiddlyDesktop runs `npm exec @tiddlywiki/create-mws`, which creates the data folder, installs MWS, downloads ~TiddlyWiki and creates the database.
+
+The first login is username `admin` with password `1234`. ''Change this password immediately'' (open ''admin'', then your profile).
+
+''Accessible from'' controls who can reach the server: ''only this computer'' (`localhost`) is the safe default. Choose ''all network interfaces'' only if other computers should connect, and consider a reverse proxy with HTTPS for anything beyond your local network.
+
+!! Running and administering
+
+* ''start'' / ''stop'' / ''restart'' control the server process. Local servers started by ~TiddlyDesktop are stopped when ~TiddlyDesktop quits; ~TiddlyDesktop keeps running in the tray while one of its servers is running
+* ''admin'' opens the MWS admin page in a ~TiddlyDesktop window, where you manage wikis, templates, bags, users and roles. ''browser'' opens it in your web browser instead
+* The ''Log'' section shows the output of the server and of every operation
+* ''Updates & maintenance'' checks for new MWS versions, updates MWS (`npm update @tiddlywiki/mws`) and ~TiddlyWiki (`mws update-tiddlywiki`), and repairs an installation (`npm ci`)
+
+A server whose status is ''running (started outside ~TiddlyDesktop)'' answers on its port but was started some other way. It can be opened and backed up, but not stopped from here.
+
+!! Backups
+
+''backup now'' runs `mws backup-store`, which copies the database with SQLite's `VACUUM INTO` while the server keeps running. Older MWS versions without this command are briefly stopped while the files are copied.
+
+Each backup is a folder containing:
+
+* `store/` -- the database and attachments
+* `package.json` and `package-lock.json` -- the exact MWS version
+* `tw5/versions.txt` -- the ~TiddlyWiki versions in use
+* `passwords.key` -- unless disabled in the server settings. Without it, every password has to be reset after a restore. If you leave it out, keep a copy in a safe place
+* `mws-backup.json` -- date, MWS version and list of files
+
+Backups of SSH servers are made on the server and then downloaded to this computer.
+
+In the server ''Settings'' you can:
+
+* enable automatic backups (hourly to weekly; they run while ~TiddlyDesktop is open)
+* choose how many backups to keep
+* choose a backup folder for this server (the default folder is set under ''Settings → MWS Servers'')
+* make a backup automatically before each update
+
+!! Restoring
+
+''restore'' stops the server, moves the current `store` folder aside as `store.before-restore-<date>`, copies the backup into the data folder, reinstalls the MWS version from the backup if it differs (`npm ci`), downloads missing ~TiddlyWiki versions and starts the server again if it was running.
+
+''restore as new server'' creates a new local server from a backup. Use it to move a server to this computer, or to check that a backup is complete without touching the original.

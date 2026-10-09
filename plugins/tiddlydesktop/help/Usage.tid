@@ -106,3 +106,6 @@ The ''open'' command opens one or more wiki files/folders specified by its param
 
 Opens the backstage wiki developer tools at startup.
 
+!!! ''mws'' command
+
+Opens the [[MWS servers|$:/TiddlyDesktop/Help/MWS]] window at startup instead of the wiki list.

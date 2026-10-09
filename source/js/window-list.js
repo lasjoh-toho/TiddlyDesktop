@@ -142,8 +142,8 @@ WindowList.prototype.handleClose = function(w,removeFromWikiListOnClose) {
 	}
 	// Close the window
 	w.window_nwjs.close(true);
-	// Close the backstage window if there are no windows left
-	if(this.windows.length === 0) {
+	// Close the backstage window if there are no windows left, unless MWS servers started by us are still running
+	if(this.windows.length === 0 && !($tw.desktop.mws && $tw.desktop.mws.hasRunningServers())) {
 		this.backstageWindow_nwjs.close(true);
 	}
 };

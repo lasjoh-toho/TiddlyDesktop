@@ -1,0 +1,221 @@
+title: $:/TiddlyDesktop/styles/mws
+tags: $:/tags/Stylesheet
+
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline
+
+.td-mws {
+	padding: 1em;
+	background: <<colour wikilist-background>>;
+	min-height: 100%;
+}
+
+.td-mws-environment {
+	font-size: 0.85em;
+	color: <<colour muted-foreground>>;
+	margin-bottom: 1em;
+}
+
+.td-mws-notice, .td-mws-form, .td-mws-empty {
+	padding: 0.5em 1em;
+	margin-bottom: 1em;
+	background: <<colour wikilist-item>>;
+	box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+}
+
+.td-mws-notice-error {
+	border-left: 5px solid <<colour alert-highlight>>;
+}
+
+.td-mws-form h2 {
+	margin-top: 0.5em;
+}
+
+.td-mws-table {
+	border: none;
+	width: 100%;
+}
+
+.td-mws-table th, .td-mws-table td {
+	border: none;
+	text-align: left;
+	vertical-align: top;
+	padding: 3px 6px;
+}
+
+.td-mws-table th {
+	width: 12em;
+	font-weight: normal;
+	color: <<colour muted-foreground>>;
+}
+
+.td-mws-table th.td-mws-subheading {
+	font-weight: bold;
+	color: <<colour foreground>>;
+	padding-top: 1em;
+}
+
+.td-mws-input {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.td-mws-folder {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+	flex-wrap: wrap;
+}
+
+button.td-button.td-mws-primary {
+	background: <<colour primary>>;
+	color: <<colour background>>;
+	fill: <<colour background>>;
+}
+
+button.td-button[disabled] {
+	opacity: 0.5;
+	cursor: default;
+}
+
+.td-mws-server {
+	margin: 0 0 1em 0;
+	padding: 12px;
+	border-left: 5px solid <<colour muted-foreground>>;
+	box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+	background: <<colour wikilist-item>>;
+	color: <<colour wikilist-info>>;
+}
+
+.td-mws-server.td-mws-status-running, .td-mws-server.td-mws-status-external {
+	border-left-color: #2e9e44;
+}
+
+.td-mws-server.td-mws-status-starting, .td-mws-server.td-mws-status-stopping {
+	border-left-color: #e0a800;
+}
+
+.td-mws-server.td-mws-status-error, .td-mws-server.td-mws-status-unreachable {
+	border-left-color: #d9342b;
+}
+
+.td-mws-header {
+	display: flex;
+	align-items: baseline;
+	gap: 0.75em;
+	flex-wrap: wrap;
+}
+
+.td-mws-name {
+	font-weight: bold;
+	font-size: 1.2em;
+	color: <<colour wikilist-title>>;
+}
+
+.td-mws-kind {
+	font-size: 0.8em;
+	color: <<colour muted-foreground>>;
+}
+
+.td-mws-badge {
+	font-size: 0.75em;
+	padding: 1px 8px;
+	border-radius: 10px;
+	background: <<colour muted-foreground>>;
+	color: #fff;
+}
+
+.td-mws-badge-running, .td-mws-badge-external {
+	background: #2e9e44;
+}
+
+.td-mws-badge-starting, .td-mws-badge-stopping {
+	background: #e0a800;
+}
+
+.td-mws-badge-error, .td-mws-badge-unreachable {
+	background: #d9342b;
+}
+
+.td-mws-task {
+	font-size: 0.85em;
+	font-style: italic;
+}
+
+.td-mws-details {
+	font-size: 0.85em;
+	margin: 0.3em 0;
+	word-break: break-all;
+}
+
+.td-mws-update-available {
+	color: #2e9e44;
+	font-weight: bold;
+}
+
+.td-mws-message {
+	font-size: 0.85em;
+	margin: 0.3em 0;
+	padding: 3px 8px;
+	border-radius: 3px;
+	word-break: break-word;
+}
+
+.td-mws-message-success {
+	background: rgba(46, 158, 68, 0.12);
+}
+
+.td-mws-message-error {
+	background: rgba(217, 52, 43, 0.15);
+}
+
+.td-mws-message-time {
+	color: <<colour muted-foreground>>;
+}
+
+.td-mws-actions, .td-mws-sections, .td-mws-backup-actions {
+	margin-top: 0.5em;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4em;
+}
+
+.td-mws-actions svg {
+	width: 1em;
+	height: 1em;
+	vertical-align: middle;
+}
+
+.td-mws-sections {
+	border-top: 1px solid <<colour table-border>>;
+	padding-top: 0.5em;
+}
+
+.td-mws-remove {
+	margin-left: auto;
+}
+
+.td-mws-section {
+	margin-top: 0.5em;
+	padding: 0.5em;
+	background: <<colour tiddler-background>>;
+	border: 1px solid <<colour table-border>>;
+}
+
+.td-mws-backup {
+	padding: 0.4em 0;
+	border-bottom: 1px solid <<colour table-border>>;
+}
+
+.td-mws-restore-form {
+	margin-top: 0.5em;
+	padding: 0.5em;
+	border-left: 3px solid <<colour primary>>;
+}
+
+.td-mws-log {
+	max-height: 25em;
+	overflow: auto;
+	font-size: 0.8em;
+	white-space: pre-wrap;
+	word-break: break-all;
+}

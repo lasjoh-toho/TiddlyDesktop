@@ -164,6 +164,18 @@ chmod u+x tiddlydesktop-*-v*.AppImage
 
 # Usage
 
+## Managing MultiWikiServer
+
+TiddlyDesktop can install, run, administer and back up [MultiWikiServer](https://github.com/TiddlyWiki/MultiWikiServer) (MWS) instances. Open the **MWS servers** window from the wiki list toolbar, the tray menu, or with the `--mws` command line option.
+
+* **This computer**: install MWS into a new folder (`npm exec @tiddlywiki/create-mws`), or add an existing data folder; start and stop the server; update MWS and TiddlyWiki; back up and restore
+* **SSH**: the same for a server on another machine, using the `ssh` and `scp` commands with key-based login
+* **Remote URL**: open the admin page of a server managed elsewhere
+
+The MWS admin page (wikis, templates, bags, users, roles) opens in a TiddlyDesktop window. Backups use the `mws backup-store` command, which copies the database while the server keeps running, and can run automatically on a schedule. Local servers need [Node.js](https://nodejs.org/) 20 or newer.
+
+See the "MWS servers" topic in the TiddlyDesktop help for details.
+
 ## Multiple Configurations
 
 To have separate mutliple instances of TiddlyDesktop (for example, separate Personal and Professional instances), you can pass the `--user-data-dir` argument.  e.g. `/opt/TiddlyDesktop/nw --user-data-dir=/mnt/data/TiddlyWiki/config`.  The property should be a directory to use for holding configuration data.

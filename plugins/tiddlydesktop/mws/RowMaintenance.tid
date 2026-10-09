@@ -1,0 +1,26 @@
+title: MWSServerList/Row/Maintenance
+
+\whitespace trim
+<div class="td-mws-section">
+<table class="td-mws-table">
+<tr>
+<th><$button class="td-button" message="tm-mws-check-updates" param=<<id>> disabled=<<isBusy>>>Check for updates</$button></th>
+<td>Compare the installed MWS version with the latest version on npm.</td>
+</tr>
+<tr>
+<th><$button class="td-button" message="tm-mws-update-mws" param=<<id>> disabled=<<isBusy>>>Update MWS</$button></th>
+<td>Runs <code>npm update @tiddlywiki/mws</code>, which installs bug-fix releases within the current version range. The server is stopped during the update and restarted afterwards. Database changes are applied when the server starts.</td>
+</tr>
+<tr>
+<th><$button class="td-button" message="tm-mws-update-tiddlywiki" param=<<id>> disabled=<<isBusy>>>Update ~TiddlyWiki</$button></th>
+<td>Runs <code>mws update-tiddlywiki</code> to download the latest ~TiddlyWiki release. Restart the server afterwards.</td>
+</tr>
+<tr>
+<th><$button class="td-button" message="tm-mws-repair" param=<<id>> disabled=<<isBusy>>>Repair</$button></th>
+<td>Reinstalls <code>node_modules</code> with <code>npm ci</code> and downloads missing ~TiddlyWiki versions, eg after copying a data folder to this computer.</td>
+</tr>
+</table>
+<$list filter="[<currentTiddler>get[mws-backup-before-update]!match[no]]" variable="ignore" emptyMessage="""<p class="tc-muted">No backup is made before updates (see Settings).</p>""">
+<p class="tc-muted">A backup is made automatically before each update (see Settings).</p>
+</$list>
+</div>

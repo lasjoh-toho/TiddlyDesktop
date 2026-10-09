@@ -1,0 +1,43 @@
+title: MWSServerList/Row/Settings
+
+\whitespace trim
+<div class="td-mws-section">
+<table class="td-mws-table">
+<tr><th>Name</th><td><<field-input caption>></td></tr>
+<$list filter="[<kind>!match[remote]]" variable="ignore">
+<tr><th>Data folder</th><td><<field-input mws-path>></td></tr>
+<tr><th>Listen on (host)</th><td><<field-input mws-host "localhost">></td></tr>
+<tr><th>Port</th><td><<field-input mws-port "8080" number>></td></tr>
+</$list>
+<tr><th>URL</th><td><$transclude $variable="field-input" field="mws-url" placeholder={{{ [<kind>match[remote]then[https://wiki.example.org/]else[optional, derived from host and port]] }}}/></td></tr>
+<$list filter="[<kind>!match[remote]]" variable="ignore">
+<tr><th>Start automatically</th><td><$checkbox field="mws-autostart" checked="yes" unchecked="no" default="no"> start the server when ~TiddlyDesktop starts</$checkbox></td></tr>
+<tr><th colspan="2" class="td-mws-subheading">Backups</th></tr>
+<tr><th>Backup folder</th><td><$transclude $variable="field-input" field="mws-backup-path" placeholder="default (see TiddlyDesktop settings)"/></td></tr>
+<tr><th>Automatic backups</th><td>
+<$select field="mws-backup-interval" default="0">
+<option value="0">off</option>
+<option value="1">every hour</option>
+<option value="6">every 6 hours</option>
+<option value="12">every 12 hours</option>
+<option value="24">daily</option>
+<option value="168">weekly</option>
+</$select>
+<div class="tc-muted">Automatic backups run while ~TiddlyDesktop is open.</div>
+</td></tr>
+<tr><th>Keep</th><td><$transclude $variable="field-input" field="mws-backup-keep" placeholder="10" type="number"/> most recent backups (0 keeps all)</td></tr>
+<tr><th></th><td><$checkbox field="mws-backup-passwords-key" checked="yes" unchecked="no" default="yes"> include <code>passwords.key</code> (without it, all passwords must be reset after a restore)</$checkbox></td></tr>
+<tr><th></th><td><$checkbox field="mws-backup-before-update" checked="yes" unchecked="no" default="yes"> make a backup before updates</$checkbox></td></tr>
+</$list>
+<$list filter="[<kind>match[ssh]]" variable="ignore">
+<tr><th colspan="2" class="td-mws-subheading">SSH</th></tr>
+<tr><th>SSH target</th><td><<field-input ssh-target "user@example.org">></td></tr>
+<tr><th>SSH port</th><td><<field-input ssh-port "22" number>></td></tr>
+<tr><th>Shell setup</th><td><$transclude $variable="field-input" field="ssh-prefix" placeholder="optional, eg . ~/.nvm/nvm.sh"/></td></tr>
+<tr><th>Start command</th><td><$transclude $variable="field-input" field="ssh-start" placeholder="default: start in the background with nohup, writing mws.log and mws.pid"/>
+<div class="tc-muted">Runs in the data folder. Use eg <code>sudo systemctl start mws</code> if MWS runs as a service.</div></td></tr>
+<tr><th>Stop command</th><td><$transclude $variable="field-input" field="ssh-stop" placeholder="default: kill the process in mws.pid"/></td></tr>
+</$list>
+</table>
+<p class="tc-muted">Changes to host and port take effect when the server is restarted.</p>
+</div>

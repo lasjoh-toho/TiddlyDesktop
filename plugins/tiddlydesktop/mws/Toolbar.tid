@@ -1,0 +1,53 @@
+title: MWSServerList/Toolbar
+
+\whitespace trim
+\procedure open-form(mode)
+<$action-deletetiddler $tiddler="$:/temp/TiddlyDesktop/MWS/Form"/>
+<$action-setfield $tiddler="$:/temp/TiddlyDesktop/MWS/Form" mode=<<mode>> host={{{ [<mode>match[ssh]then[0.0.0.0]else[localhost]] }}} folder={{{ [<mode>match[install]then[mws]] }}}/>
+\end
+
+<div class="td-toolbar">
+<div class="td-toolbar-item">
+<$transclude tiddler="WikiListToolbar/Logo"/>
+</div>
+<div class="td-toolbar-item">
+<$button class="td-button" actions=<<open-form install>>>
+{{$:/core/images/new-button}} Install new server
+</$button>
+</div>
+<div class="td-toolbar-item">
+<$button class="td-button" actions=<<open-form existing>>>
+{{$:/core/images/folder}} Add existing folder
+</$button>
+</div>
+<div class="td-toolbar-item">
+<$button class="td-button" actions=<<open-form ssh>>>
+{{$:/core/images/globe}} SSH server
+</$button>
+</div>
+<div class="td-toolbar-item">
+<$button class="td-button" actions=<<open-form remote>>>
+{{$:/core/images/link}} Remote URL
+</$button>
+</div>
+<div class="td-toolbar-item">
+<$button class="td-button" message="tm-mws-refresh">
+{{$:/core/images/refresh-button}} Refresh
+</$button>
+</div>
+<div class="td-toolbar-item">
+<$button class="td-button" message="tiddlydesktop-add-wiki-url" param="backstage://WikiListWindow">
+{{$:/core/images/list}} Wiki list
+</$button>
+</div>
+<div class="td-toolbar-item">
+<$button class="td-button" message="tiddlydesktop-add-wiki-url" param="backstage://$:/TiddlyDesktop/Settings">
+{{$:/core/images/options-button}} Settings
+</$button>
+</div>
+<div class="td-toolbar-item">
+<$button class="td-button" message="tiddlydesktop-add-wiki-url" param="backstage://$:/TiddlyDesktop/Help">
+{{$:/core/images/help}} Help
+</$button>
+</div>
+</div>

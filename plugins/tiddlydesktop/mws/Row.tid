@@ -1,0 +1,115 @@
+title: MWSServerList/Row
+
+\whitespace trim
+\procedure section-button(name,label)
+<$button class="tc-btn-invisible td-button td-mws-section-button" set=<<sectionState>> setTo={{{ [<sectionState>get[text]match<name>then[]else<name>] }}}>
+<<label>>
+</$button>
+\end
+\procedure field-input(field,placeholder,type:"text")
+<$edit-text field=<<field>> tag="input" type=<<type>> placeholder=<<placeholder>> class="td-mws-input"/>
+\end
+
+<$let
+	id={{{ [<currentTiddler>removeprefix[$:/TiddlyDesktop/MWS/Server/]] }}}
+	state={{{ [<id>addprefix[$:/temp/TiddlyDesktop/MWS/State/]] }}}
+	logTitle={{{ [<id>addprefix[$:/temp/TiddlyDesktop/MWS/Log/]] }}}
+	backupPrefix={{{ [<id>addprefix[$:/temp/TiddlyDesktop/MWS/Backup/]addsuffix[/]] }}}
+	sectionState={{{ [<id>addprefix[$:/temp/TiddlyDesktop/MWS/section/]] }}}
+	kind={{{ [<currentTiddler>get[mws-kind]else[local]] }}}
+	status={{{ [<id>addprefix[$:/temp/TiddlyDesktop/MWS/State/]get[status]else[unknown]] }}}
+	task={{{ [<id>addprefix[$:/temp/TiddlyDesktop/MWS/State/]get[task]] }}}
+	url={{{ [<id>addprefix[$:/temp/TiddlyDesktop/MWS/State/]get[url]] }}}
+	isBusy={{{ [<id>addprefix[$:/temp/TiddlyDesktop/MWS/State/]get[task]!is[blank]then[yes]else[no]] }}}
+>
+<div class=`td-mws-server td-mws-status-$(status)$`>
+
+<div class="td-mws-header">
+<span class="td-mws-name"><$view field="caption"><$text text=<<id>>/></$view></span>
+<span class="td-mws-kind"><$text text={{{ [<kind>match[local]then[this computer]] [<kind>match[ssh]then[ssh]] [<kind>match[remote]then[remote]] }}}/></span>
+<span class=`td-mws-badge td-mws-badge-$(status)$`><$text text={{{ [<status>match[external]then[running (started outside TiddlyDesktop)]else<status>] }}}/></span>
+<$list filter="[<task>!is[blank]]" variable="ignore">
+<span class="td-mws-task">⟳ <$text text=<<task>>/> …</span>
+</$list>
+</div>
+
+<div class="td-mws-details">
+<$list filter="[<url>!is[blank]]" variable="ignore">
+<$button class="tc-btn-invisible tc-tiddlylink" message="tm-mws-open-admin" param=<<id>>><$text text=<<url>>/></$button>
+</$list>
+<$list filter="[<kind>match[local]]" variable="ignore">
+&#32;· <$text text={{!!mws-path}}/>
+</$list>
+<$list filter="[<kind>match[ssh]]" variable="ignore">
+&#32;· <$text text={{{ [<currentTiddler>get[ssh-target]] }}}/>:<$text text={{!!mws-path}}/>
+</$list>
+<$list filter="[<state>get[mws-version]!is[blank]]" variable="version">
+&#32;· MWS <<version>>
+</$list>
+<$list filter="[<state>get[mws-latest]!is[blank]] -[<state>get[mws-version]]" variable="latest">
+&#32;<span class="td-mws-update-available">(<<latest>> available)</span>
+</$list>
+<$list filter="[<kind>!match[remote]]" variable="ignore">
+&#32;· last backup:&#32;
+<$list filter="[<state>get[last-backup]!is[blank]]" variable="date" emptyMessage="never">
+<$view tiddler=<<state>> field="last-backup" format="date" template="YYYY-0MM-0DD 0hh:0mm"/>
+</$list>
+</$list>
+</div>
+
+<$list filter="[<kind>match[local]then<state>get[installed]match[no]]" variable="ignore">
+<div class="td-mws-notice td-mws-notice-error">
+MWS is not installed in this folder (node_modules is missing). Use ''repair'' to run <code>npm ci</code>.
+</div>
+</$list>
+
+<$list filter="[<state>get[message]!is[blank]]" variable="message">
+<div class=`td-mws-message td-mws-message-${ [<state>get[message-type]] }$`>
+<$text text=<<message>>/>
+<span class="td-mws-message-time">&#32;(<$text text={{{ [<state>get[message-time]] }}}/>)</span>
+</div>
+</$list>
+
+<div class="td-mws-actions">
+<$list filter="[<kind>!match[remote]]" variable="ignore">
+<$list filter="[<status>match[running]] [<status>match[starting]] [<status>match[external]] +[limit[1]]" variable="ignore" emptyMessage="""<$button class="td-button td-mws-primary" message="tm-mws-start" param=<<id>> disabled=<<isBusy>>>{{$:/core/images/chevron-right}} start</$button>""">
+<$button class="td-button" message="tm-mws-stop" param=<<id>> disabled=<<isBusy>>>{{$:/core/images/close-button}} stop</$button>
+<$button class="td-button" message="tm-mws-restart" param=<<id>> disabled=<<isBusy>>>{{$:/core/images/refresh-button}} restart</$button>
+</$list>
+</$list>
+<$button class="td-button" message="tm-mws-open-admin" param=<<id>>>{{$:/core/images/options-button}} admin</$button>
+<$button class="td-button" message="tm-mws-open-browser" param=<<id>>>{{$:/core/images/globe}} browser</$button>
+<$list filter="[<kind>!match[remote]]" variable="ignore">
+<$button class="td-button" message="tm-mws-backup" param=<<id>> disabled=<<isBusy>>>{{$:/core/images/save-button}} backup now</$button>
+</$list>
+<$list filter="[<kind>match[local]]" variable="ignore">
+<$button class="td-button" message="tm-mws-reveal" param=<<id>>>{{$:/core/images/folder}} reveal</$button>
+</$list>
+<$button class="td-button" message="tm-mws-status" param=<<id>>>check</$button>
+</div>
+
+<div class="td-mws-sections">
+<$list filter="[<kind>!match[remote]]" variable="ignore">
+<<section-button backups "Backups">>
+<<section-button maintenance "Updates & maintenance">>
+</$list>
+<<section-button settings "Settings">>
+<<section-button log "Log">>
+<$button class="tc-btn-invisible td-button td-mws-remove" message="tm-mws-remove" param=<<id>> disabled=<<isBusy>>>remove</$button>
+</div>
+
+<$list filter="[<sectionState>get[text]match[backups]]" variable="ignore">
+<$transclude tiddler="MWSServerList/Row/Backups" mode="block"/>
+</$list>
+<$list filter="[<sectionState>get[text]match[maintenance]]" variable="ignore">
+<$transclude tiddler="MWSServerList/Row/Maintenance" mode="block"/>
+</$list>
+<$list filter="[<sectionState>get[text]match[settings]]" variable="ignore">
+<$transclude tiddler="MWSServerList/Row/Settings" mode="block"/>
+</$list>
+<$list filter="[<sectionState>get[text]match[log]]" variable="ignore">
+<$transclude tiddler="MWSServerList/Row/Log" mode="block"/>
+</$list>
+
+</div>
+</$let>

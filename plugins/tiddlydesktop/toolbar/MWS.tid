@@ -1,0 +1,8 @@
+title: WikiListToolbar/MWS
+tags: toolbar
+
+<$button class="td-button">
+<$action-sendmessage $message="tiddlydesktop-add-wiki-url" $param="backstage://MWSServerList"/>
+{{$:/core/images/globe}}
+MWS servers
+</$button>

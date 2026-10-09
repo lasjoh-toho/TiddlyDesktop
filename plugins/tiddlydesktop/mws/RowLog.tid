@@ -1,0 +1,12 @@
+title: MWSServerList/Row/Log
+
+\whitespace trim
+<div class="td-mws-section">
+<p>
+<$button class="td-button" message="tm-mws-clear-log" param=<<id>>>Clear</$button>
+<$list filter="[<kind>match[ssh]]" variable="ignore">
+&#32;<$button class="td-button" message="tm-mws-fetch-log" param=<<id>> disabled=<<isBusy>>>Fetch mws.log from server</$button>
+</$list>
+</p>
+<pre class="td-mws-log"><$text text={{{ [<logTitle>get[text]else[(empty)]] }}}/></pre>
+</div>

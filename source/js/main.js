@@ -8,7 +8,8 @@ var gui = require("nw.gui"),
 	fs = require("fs"),
 	path = require("path");
 
-var WindowList = require("../js/window-list.js").WindowList;
+var WindowList = require("../js/window-list.js").WindowList,
+	MwsManager = require("../js/mws/manager.js").MwsManager;
 
 // Use the main window as the backstage window
 var backstageWindow = gui.Window.get();
@@ -44,6 +45,12 @@ trayMenu.append(new gui.MenuItem({
 	}
 }));
 trayMenu.append(new gui.MenuItem({
+	label: "MWS Servers",
+	click: function() {
+		$tw.desktop.windowList.openByUrl("backstage://MWSServerList");
+	}
+}));
+trayMenu.append(new gui.MenuItem({
 	label: "Settings",
 	click: function() {
 		$tw.desktop.windowList.openByUrl("backstage://$:/TiddlyDesktop/Settings");
@@ -66,6 +73,7 @@ trayMenu.append(new gui.MenuItem({
 	trayMenu.append(new gui.MenuItem({
 	label: "Quit",
 	click: function() {
+		$tw.desktop.mws.killAll();
 		gui.App.quit();
 		// gui.App.closeAllWindows();
 	}
@@ -80,6 +88,9 @@ var $tw = {desktop: {
 	backstageWindow: {
 		show: showBackstageWindow
 	},
+	mws: new MwsManager({
+		appDataPath: gui.App.dataPath
+	}),
 	gui: gui,
 	utils: {
 		devtools: require("../js/utils/devtools.js"),
@@ -137,6 +148,10 @@ var defaultCommand = "open",
 		},
 		"debug": function(args) {
 			backstageWindow.showDevTools();
+		},
+		"mws": function(args) {
+			$tw.desktop.windowList.openByUrl("backstage://MWSServerList");
+			commandFlags.haveOpenedWindow = true;
 		}
 	};
 
@@ -145,6 +160,8 @@ var defaultCommand = "open",
 $tw.boot.suppressBoot = true;
 require("../tiddlywiki/boot/boot.js").TiddlyWiki($tw);
 $tw.boot.boot(function() {
+	// Start managing MultiWikiServer instances
+	$tw.desktop.mws.init();
 	// Process command line
 	var tokens = gui.App.argv.slice(0),
 		command, commandFn,
