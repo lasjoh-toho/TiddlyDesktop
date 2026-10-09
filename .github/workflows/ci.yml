@@ -88,6 +88,12 @@ jobs:
         with:
           name: tiddlydesktop-${{ matrix.platform-for-pkg }}-v${{ steps.td-version.outputs.version }}.zip
           path: output/tiddlydesktop-${{ matrix.platform-for-pkg }}-v${{ steps.td-version.outputs.version }}.zip
+      - name: "📤 Uploading macOS disk images..."
+        uses: actions/upload-artifact@v4
+        if: matrix.platform == 'osx'
+        with:
+          name: tiddlydesktop-${{ matrix.platform-for-pkg }}-v${{ steps.td-version.outputs.version }}.dmg
+          path: output/tiddlydesktop-${{ matrix.platform-for-pkg }}-v${{ steps.td-version.outputs.version }}.dmg
       - name: "📤 Uploading Linux AppImage packages..."
         uses: actions/upload-artifact@v4
         if: matrix.platform == 'linux'
@@ -118,3 +124,4 @@ jobs:
           files: |
             tiddlydesktop-*-v${{ needs.build-and-package.outputs.td-version }}.zip
             tiddlydesktop-*-v${{ needs.build-and-package.outputs.td-version }}.AppImage
+            tiddlydesktop-*-v${{ needs.build-and-package.outputs.td-version }}.dmg

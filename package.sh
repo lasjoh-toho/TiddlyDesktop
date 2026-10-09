@@ -19,20 +19,29 @@ zip -r "../tiddlydesktop-win64-v$VERSION.zip" *
 popd
 }
 
-package_mac64() {
-pushd ./output/mac64
-sudo xattr -rc "./TiddlyDesktop-mac64-v$VERSION/TiddlyDesktop.app"
-sudo codesign --force --deep --sign - "./TiddlyDesktop-mac64-v$VERSION/TiddlyDesktop.app"
-zip --symlinks -r "../tiddlydesktop-mac64-v$VERSION.zip" *
+# Sign the app ad-hoc and package it as a zip and as a disk image
+# The disk image avoids problems with Archive Utility and Safari's automatic unzipping
+package_mac() {
+local name="$1"
+local folder="TiddlyDesktop-$name-v$VERSION"
+pushd "./output/$name"
+sudo xattr -rc "./$folder/TiddlyDesktop.app"
+sudo codesign --force --deep --sign - "./$folder/TiddlyDesktop.app"
+codesign --verify --deep --strict "./$folder/TiddlyDesktop.app" || exit 1
+zip --symlinks -r "../tiddlydesktop-$name-v$VERSION.zip" *
+# Add a link to /Applications so the app can be installed by dragging it across
+ln -s /Applications "./$folder/Applications"
+hdiutil create -volname "TiddlyDesktop" -srcfolder "./$folder" -ov -format UDZO "../tiddlydesktop-$name-v$VERSION.dmg" || exit 1
+rm "./$folder/Applications"
 popd
 }
 
+package_mac64() {
+package_mac mac64
+}
+
 package_macapplesilicon() {
-pushd ./output/macapplesilicon
-sudo xattr -rc "./TiddlyDesktop-macapplesilicon-v$VERSION/TiddlyDesktop.app"
-sudo codesign --force --deep --sign - "./TiddlyDesktop-macapplesilicon-v$VERSION/TiddlyDesktop.app"
-zip --symlinks -r "../tiddlydesktop-macapplesilicon-v$VERSION.zip" *
-popd
+package_mac macapplesilicon
 }
 
 package_linux32() {

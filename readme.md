@@ -18,6 +18,21 @@ https://github.com/TiddlyWiki/TiddlyDesktop/releases
 
 Unzip into a folder and run `TiddlyWiki.app` or `nw.exe` and for linux `nw`
 
+## macOS
+
+Download `tiddlydesktop-macapplesilicon-v*.dmg` for Apple Silicon (M1 and newer) or `tiddlydesktop-mac64-v*.dmg` for Intel Macs, open it and drag `TiddlyDesktop.app` onto the `Applications` folder.
+
+If you download the `.zip` instead, note that Safari unzips downloads automatically. The `TiddlyDesktop-...` folder in your Downloads folder already contains the app; double-clicking the remaining `.zip` again leads to an error.
+
+TiddlyDesktop is not notarised by Apple, so the first launch is blocked by Gatekeeper with a message that the app "is damaged" or "cannot be opened". To allow it, either:
+
+* open *System Settings → Privacy & Security* after the first attempt and click *Open Anyway*, or
+* run this command in Terminal once:
+
+```
+xattr -dr com.apple.quarantine /Applications/TiddlyDesktop.app
+```
+
 Note that TiddlyDesktop will not work correctly from a Windows UNC network share (eg ``\\MY-SERVER\SHARE\MyFolder``). You should map the network share to a local drive, and run it from there.
 
 ## Linux AppImage
