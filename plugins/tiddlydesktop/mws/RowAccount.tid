@@ -1,0 +1,28 @@
+title: MWSServerList/Row/Account
+
+\whitespace trim
+<div class="td-mws-section">
+<$let loginForm={{{ [<id>addprefix[$:/temp/TiddlyDesktop/MWS/Login/]] }}} user={{{ [<state>get[sync-user]] }}}>
+<$list filter="[<user>!is[blank]]" variable="ignore" emptyMessage="""
+<p>
+Log in to publish wikis to this server and to keep wikis in sync with it. ~TiddlyDesktop keeps the login session, not the password.
+</p>
+<table class="td-mws-table">
+<tr><th>Username</th><td><$edit-text tiddler=<<loginForm>> field="username" tag="input" class="td-mws-input" placeholder="admin"/></td></tr>
+<tr><th>Password</th><td><$edit-text tiddler=<<loginForm>> field="password" tag="input" type="password" class="td-mws-input"/></td></tr>
+</table>
+<$button class="td-button td-mws-primary">
+<$action-sendmessage $message="tm-mws-login" $param=<<loginForm>> server=<<id>>/>
+Log in
+</$button>
+""">
+<p>
+Logged in as <strong><<user>></strong>. Wikis linked to this server sync with the permissions of this user.
+</p>
+<$button class="td-button" message="tm-mws-logout" param=<<id>>>Log out</$button>
+</$list>
+<$list filter="[<state>get[login-message]!is[blank]]" variable="message">
+<p class="td-mws-message td-mws-message-error"><$text text=<<message>>/></p>
+</$list>
+</$let>
+</div>

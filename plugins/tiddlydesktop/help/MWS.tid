@@ -12,7 +12,7 @@ tags: $:/TiddlyDesktop/Help
 * An internet connection to install and update MWS and ~TiddlyWiki
 * For SSH servers: the `ssh` and `scp` commands (included in Windows 10 and newer, macOS and Linux), log-in without a password prompt (an SSH key in your SSH agent) and Node.js 20 or newer on the server
 
-If Node.js is installed in an unusual location, set its folder under ''Settings → MWS Servers''.
+If Node.js is missing, click ''Install Node.js automatically'' in the MWS servers window. ~TiddlyDesktop downloads the current LTS release from nodejs.org, verifies its checksum and unpacks it into its own data folder; no administrator rights are needed. If Node.js is installed in an unusual location, set its folder under ''Settings → MWS Servers''.
 
 !! Kinds of servers
 
@@ -64,3 +64,26 @@ In the server ''Settings'' you can:
 ''restore'' stops the server, moves the current `store` folder aside as `store.before-restore-<date>`, copies the backup into the data folder, reinstalls the MWS version from the backup if it differs (`npm ci`), downloads missing ~TiddlyWiki versions and starts the server again if it was running.
 
 ''restore as new server'' creates a new local server from a backup. Use it to move a server to this computer, or to check that a backup is complete without touching the original.
+
+!! Syncing local wikis with MWS
+
+Wikis in the wiki list can be kept in sync with a wiki on an MWS server. Click ''MWS sync'' on a wiki in the wiki list:
+
+* ''publish as a new wiki'' creates a wiki on the server (for servers on this computer or managed over SSH) and uploads the local wiki. Stock plugins, themes and languages of the local wiki are enabled for the wiki on the server
+* ''link to an existing wiki'' connects the local wiki to a wiki that already exists on the server, for example one created on the admin page, or one that was published from another computer. Choose what happens with tiddlers that exist on both sides the first time
+
+Before publishing or linking, log in to the server in the ''Account'' section of the server in the MWS servers window. ~TiddlyDesktop stores the login session, not the password, in a file that only your user account can read. Publishing needs an administrator; syncing needs a user that may read and write the wiki.
+
+!!! How syncing works
+
+* Changes in the local wiki are uploaded a moment after they are made; the server is checked for changes every 15 seconds
+* Changes made while the wiki was closed, or while ~TiddlyDesktop was not running, are picked up the next time the wiki is open
+* With ''keep in sync while ~TiddlyDesktop runs'', the wiki is loaded in the background when ~TiddlyDesktop starts, so it stays in sync even when its window is closed
+* If the same tiddler was changed on both sides, the newer version wins. The other version is kept as a separate tiddler titled `<title> (sync conflict, local version, <date>)` or `(sync conflict, server version, <date>)`, and has a `sync-conflict-of` field. Merge it by hand and delete it
+* A deletion on one side deletes the tiddler on the other side, unless it was changed there in the meantime
+* Not synced: `$:/core` and the stock plugins, themes and languages (the server provides those), drafts, and state tiddlers such as `$:/StoryList` and everything under `$:/state/`, `$:/temp/` and `$:/status/`
+* Tiddlers that the user may not write on the server (for example from a read only bag) are downloaded but local changes to them are not uploaded; the sync status shows how many
+
+Several computers can sync the same wiki: publish it from one computer, and link it from the others.
+
+Single file wikis are saved by the wiki itself after changes arrive, so keep autosave enabled in them. Wiki folders save each tiddler as a file.

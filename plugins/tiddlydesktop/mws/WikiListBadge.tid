@@ -1,0 +1,7 @@
+title: WikiListRow/MWS/Badge
+
+\whitespace trim
+<$let status={{{ [<currentTiddler>addprefix[$:/temp/TiddlyDesktop/MWS/SyncStatus/]get[state]else[closed]] }}}
+	recipe={{{ [<currentTiddler>addprefix[$:/TiddlyDesktop/Config/mws-sync/]get[recipe]] }}}>
+&#32;<span class=`td-mws-badge td-mws-sync-badge td-mws-sync-$(status)$` title=`synced with MWS wiki "$(recipe)$"`>⇅ <$text text=<<recipe>>/></span>
+</$let>

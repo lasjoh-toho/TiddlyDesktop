@@ -17,11 +17,13 @@ function WikiFileWindow(options) {
 	this.info = options.info || {};
 	this.pathname = options.info.pathname;
 	this.mustQuitOnClose = options.mustQuitOnClose;
+	// Hidden windows keep a wiki loaded so that it stays in sync with a MultiWikiServer
+	this.hidden = !!options.hidden;
 	// Open the window
 console.log("Opening window with id",this.getIdentifier());
 	$tw.desktop.gui.Window.open("html/wiki-file-window.html",{
 		id: hash.simpleHash(this.getIdentifier()),
-		show: true,
+		show: !this.hidden,
 		icon: "images/app_icon.png"
 	},function(win) {
 		self.window_nwjs = win;
@@ -73,8 +75,10 @@ WikiFileWindow.prototype.onloaded = function(event) {
 	// Save the wiki list tiddler
 	this.saveWikiListTiddler();
 	// Show the window
-	this.window_nwjs.show();
-	this.window_nwjs.focus();
+	if(!this.hidden) {
+		this.window_nwjs.show();
+		this.window_nwjs.focus();
+	}
 };
 
 // Load handler for iframe
@@ -104,10 +108,16 @@ WikiFileWindow.prototype.onloadiframe = function() {
 	if(faviconLink) {
 		this.favIconObserver.observe(faviconLink,{attributes: true, childList: true, characterData: true});		
 	}
+	// Start syncing with a MultiWikiServer if this wiki is linked to one
+	$tw.desktop.mws.sync.attachFileWiki(this.getIdentifier(),this.iframe.contentWindow.$tw);
 };
 
 // Reopen this window
 WikiFileWindow.prototype.reopen = function() {
+	if(this.hidden) {
+		this.hidden = false;
+		this.window_nwjs.show();
+	}
 	this.window_nwjs.focus();
 };
 
@@ -161,6 +171,8 @@ WikiFileWindow.prototype.onclose = function(event) {
 			return false;
 		}				
 	}
+	// Stop syncing
+	$tw.desktop.mws.sync.detach(this.getIdentifier());
 	// Delete the mutation observers for the title and the favicon
 	this.titleObserver.disconnect();
 	this.favIconObserver.disconnect();

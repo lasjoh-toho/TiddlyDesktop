@@ -184,6 +184,73 @@ exports.startup = function() {
 		},
 		"tm-mws-clear-log": function(event) {
 			mws().clearLog(event.param);
+		},
+		"tm-mws-install-node": function(event) {
+			return report(mws().installNode());
+		},
+		// Log in to a server for syncing. The form tiddler holds username and password and is deleted right away
+		"tm-mws-login": function(event) {
+			var fields = formFields(event),
+				serverId = event.paramObject && event.paramObject.server;
+			closeForm(event);
+			if(!serverId || !fields.username || !fields.password) {
+				mws().alert("Enter username and password");
+				return;
+			}
+			mws().setState(serverId,{"login-message": "Logging in..."});
+			mws().sync.login(serverId,fields.username,fields.password).then(function(username) {
+				mws().setState(serverId,{"login-message": ""});
+			},function(err) {
+				mws().setState(serverId,{"login-message": (err && err.message) || String(err)});
+			});
+		},
+		"tm-mws-logout": function(event) {
+			mws().sync.logout(event.param);
+		},
+		// Publish a wiki from the wiki list. param: wiki url, paramObject.form: form tiddler
+		"tm-mws-publish": function(event) {
+			var form = (event.paramObject && event.paramObject.form) || FORM_TITLE,
+				fields = formFields({param: form}),
+				wikiUrl = event.param;
+			mws().sync.publish(wikiUrl,fields).then(function() {
+				$tw.wiki.deleteTiddler(form);
+			},function(err) {
+				mws().alert((err && err.message) || String(err));
+			});
+		},
+		"tm-mws-link": function(event) {
+			var form = (event.paramObject && event.paramObject.form) || FORM_TITLE,
+				fields = formFields({param: form}),
+				wikiUrl = event.param;
+			mws().sync.link(wikiUrl,fields).then(function(message) {
+				$tw.wiki.deleteTiddler(form);
+				mws().sync.setStatus(wikiUrl,{state: "starting", message: message});
+			},function(err) {
+				mws().alert((err && err.message) || String(err));
+			});
+		},
+		"tm-mws-unlink": function(event) {
+			if(confirm(event,"Stop syncing this wiki with MWS?\n\nBoth copies are kept as they are.")) {
+				mws().sync.unlink(event.param);
+			}
+		},
+		"tm-mws-sync-now": function(event) {
+			mws().sync.syncNow(event.param);
+		},
+		"tm-mws-sync-pause": function(event) {
+			mws().sync.setEnabled(event.param,false);
+		},
+		"tm-mws-sync-resume": function(event) {
+			mws().sync.setEnabled(event.param,true);
+		},
+		"tm-mws-sync-restart": function(event) {
+			mws().sync.restart(event.param);
+		},
+		"tm-mws-open-wiki": function(event) {
+			var link = mws().sync.getLink(event.param);
+			if(link && link.server) {
+				mws().openAdmin(link.serverId,"wiki/" + encodeURIComponent(link.recipe));
+			}
 		}
 	};
 

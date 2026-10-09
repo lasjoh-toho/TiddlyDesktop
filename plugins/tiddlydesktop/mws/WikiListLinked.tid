@@ -1,0 +1,37 @@
+title: WikiListRow/MWS/Linked
+
+\whitespace trim
+<$let
+	serverId={{{ [<linkTitle>get[server]] }}}
+	recipe={{{ [<linkTitle>get[recipe]] }}}
+	status={{{ [<statusTitle>get[state]else[closed]] }}}
+	enabled={{{ [<linkTitle>get[enabled]else[yes]] }}}
+>
+<p>
+Synced with <strong><$text text=<<recipe>>/></strong> on <strong><$text text={{{ [<serverId>addprefix[$:/TiddlyDesktop/MWS/Server/]get[caption]else<serverId>] }}}/></strong>
+&#32;<span class=`td-mws-badge td-mws-sync-$(status)$`><$text text=<<status>>/></span>
+</p>
+<p class="td-mws-details">
+<$list filter="[<statusTitle>get[message]!is[blank]]" variable="message"><$text text=<<message>>/></$list>
+<$list filter="[<statusTitle>get[last-sync]!is[blank]]" variable="ignore">
+&#32;· last sync <$view tiddler=<<statusTitle>> field="last-sync" format="date" template="YYYY-0MM-0DD 0hh:0mm:0ss"/>
+</$list>
+<$list filter="[<statusTitle>get[conflicts]!match[0]!is[blank]]" variable="count">
+&#32;· <<count>> conflicts in this session (search for "sync conflict")
+</$list>
+</p>
+<$list filter="[<status>match[login]]" variable="ignore">
+<p class="td-mws-message td-mws-message-error">The server refused access. Log in under Account in the <$button class="tc-btn-invisible tc-tiddlylink" message="tiddlydesktop-add-wiki-url" param="backstage://MWSServerList">MWS servers</$button> window with a user that may read and write this wiki.</p>
+</$list>
+<div class="td-mws-actions">
+<$button class="td-button" message="tm-mws-sync-now" param=<<wikiUrl>>>sync now</$button>
+<$list filter="[<enabled>match[no]]" variable="ignore" emptyMessage="""<$button class="td-button" message="tm-mws-sync-pause" param=<<wikiUrl>>>pause</$button>""">
+<$button class="td-button td-mws-primary" message="tm-mws-sync-resume" param=<<wikiUrl>>>resume</$button>
+</$list>
+<$button class="td-button" message="tm-mws-open-wiki" param=<<wikiUrl>>>open on server</$button>
+<$button class="td-button" message="tm-mws-unlink" param=<<wikiUrl>>>stop syncing</$button>
+</div>
+<p>
+<$checkbox tiddler=<<linkTitle>> field="background" checked="yes" unchecked="no" default="no" actions="""<$action-sendmessage $message="tm-mws-sync-restart" $param=<<wikiUrl>>/>"""> keep in sync while ~TiddlyDesktop runs, even when the wiki window is closed</$checkbox>
+</p>
+</$let>

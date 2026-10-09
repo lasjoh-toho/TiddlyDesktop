@@ -5,12 +5,17 @@
 # Remove any old build
 rm -Rf output
 rm -Rf source/tiddlywiki
+rm -Rf source/node_modules
 
 # Install TiddlyWiki to node_modules/tiddlywiki
 npm install
 
 # Copy TiddlyWiki core files into the source directory
 cp -RH node_modules/tiddlywiki source/tiddlywiki
+
+# Copy the OPAQUE library that is used to log in to MultiWikiServer
+mkdir -p source/node_modules/@serenity-kit
+cp -RH node_modules/@serenity-kit/opaque source/node_modules/@serenity-kit/opaque
 
 # Copy TiddlyDesktop plugin into the source directory
 cp -RH plugins/tiddlydesktop source/tiddlywiki/plugins/tiddlywiki

@@ -7,8 +7,17 @@ title: MWSServerList/Environment
 <$list filter="[<env>get[node]!is[blank]]" variable="version" emptyMessage="""<strong>Node.js was not found.</strong> MWS needs Node.js 20 or newer on this computer to install and run local servers.""">
 <strong>Node.js <<version>> is too old.</strong> MWS needs Node.js 20 or newer.
 </$list>
-&#32;Install it from <a href="https://nodejs.org/" class="tc-tiddlylink-external">nodejs.org</a>, or set the Node.js folder under <$button class="tc-btn-invisible tc-tiddlylink" message="tiddlydesktop-add-wiki-url" param="backstage://$:/TiddlyDesktop/Settings">Settings</$button>, then&#32;
+<p>
+<$button class="td-button td-mws-primary" message="tm-mws-install-node">Install Node.js automatically</$button>
+&#32;downloads the current LTS version from nodejs.org into the ~TiddlyDesktop data folder (no administrator rights needed, nothing else on the computer is changed).
+</p>
+<$list filter="[<env>get[install-progress]!is[blank]]" variable="progress">
+<p><em><$text text=<<progress>>/></em></p>
+</$list>
+<p>
+Alternatively install it yourself from <a href="https://nodejs.org/" class="tc-tiddlylink-external">nodejs.org</a>, or set the Node.js folder under <$button class="tc-btn-invisible tc-tiddlylink" message="tiddlydesktop-add-wiki-url" param="backstage://$:/TiddlyDesktop/Settings">Settings</$button>, then&#32;
 <$button class="td-button" message="tm-mws-check-environment">check again</$button>
+</p>
 </div>
 </$list>
 <div class="td-mws-environment">

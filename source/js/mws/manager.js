@@ -20,7 +20,9 @@ var fs = require("fs"),
 	http = require("http"),
 	https = require("https");
 
-var runner = require("./runner.js"),
+var nodeInstaller = require("./node-installer.js"),
+	SyncManager = require("./sync-manager.js").SyncManager,
+	runner = require("./runner.js"),
 	LocalRunner = runner.LocalRunner,
 	SshRunner = runner.SshRunner,
 	quotePosix = runner.quotePosix;
@@ -47,6 +49,7 @@ function MwsManager(options) {
 	this.busy = {}; // id -> true while a task is running
 	this.logBuffers = {}; // id -> array of lines
 	this.logTimers = {};
+	this.sync = new SyncManager(this);
 }
 
 // #region Helpers
@@ -379,6 +382,29 @@ MwsManager.prototype.checkEnvironment = function() {
 	});
 };
 
+/*
+Download Node.js into the TiddlyDesktop data folder and use it
+*/
+MwsManager.prototype.installNode = function() {
+	var self = this;
+	if(this.installingNode) {
+		return Promise.resolve();
+	}
+	this.installingNode = true;
+	var progress = function(line) {
+		$tw.wiki.addTiddler(new $tw.Tiddler($tw.wiki.getTiddler(ENV_TITLE),{title: ENV_TITLE, "install-progress": line}));
+	};
+	return nodeInstaller.installNode(this.appDataPath,progress).then(function(folder) {
+		$tw.wiki.addTiddler({title: NODE_FOLDER_TITLE, text: folder});
+		progress("");
+		return self.checkEnvironment();
+	},function(err) {
+		progress("Installing Node.js failed: " + ((err && err.message) || err));
+	}).then(function() {
+		self.installingNode = false;
+	});
+};
+
 // #endregion
 
 // #region Start and stop
@@ -678,6 +704,7 @@ MwsManager.prototype.addRemote = function(params) {
 MwsManager.prototype.remove = function(id) {
 	var self = this,
 		finish = function() {
+			self.sync.logout(id);
 			$tw.wiki.deleteTiddler(SERVER_PREFIX + id);
 			$tw.wiki.deleteTiddler(STATE_PREFIX + id);
 			$tw.wiki.deleteTiddler(LOG_PREFIX + id);
@@ -1236,6 +1263,7 @@ MwsManager.prototype.init = function() {
 			}
 		});
 	});
+	this.sync.init();
 	this.timer = setInterval(function() {
 		self.checkAll().then(function() {
 			self.runScheduledBackups();

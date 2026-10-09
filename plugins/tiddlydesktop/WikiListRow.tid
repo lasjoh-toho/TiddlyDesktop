@@ -22,6 +22,9 @@ title: WikiListRow
 <$view tiddler="""$:/TiddlyDesktop/Config/title/$(currentTiddler)$""">
 Untitled
 </$view>
+<$list filter="""[[$:/TiddlyDesktop/Config/mws-sync/$(currentTiddler)$]has[recipe]]""" variable="ignore">
+<$transclude tiddler="WikiListRow/MWS/Badge" mode="inline"/>
+</$list>
 </div>
 <div class="td-wiki-url">
 <$view field="title"/>
@@ -43,6 +46,11 @@ remove
 </$button>
 </div>
 <div class="td-wiki-toolbar-item">
+<$button popup="""$:/temp/TiddlyDesktop/mws-panel/$(currentTiddler)$""" class="tc-btn-invisible td-button td-wikilist-button-mws">
+MWS sync
+</$button>
+</div>
+<div class="td-wiki-toolbar-item">
 <$button popup="""$:/TiddlyDesktop/Config/advanced/$(currentTiddler)$""" class="tc-btn-invisible td-button td-wikilist-button-advanced">
 advanced
 </$button>
@@ -55,6 +63,9 @@ advanced
 </$let>
 </div>
 </div>
+<$reveal type="nomatch" state="""$:/temp/TiddlyDesktop/mws-panel/$(currentTiddler)$""" text="">
+<$transclude tiddler="WikiListRow/MWS" mode="block"/>
+</$reveal>
 <$reveal type="nomatch" state="""$:/TiddlyDesktop/Config/advanced/$(currentTiddler)$""" text="">
 <div class="td-wiki-advanced tc-popup-handle">
 <$list filter="[all[current]prefix[wikifile://]]">

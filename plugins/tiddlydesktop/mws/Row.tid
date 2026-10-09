@@ -49,6 +49,9 @@ title: MWSServerList/Row
 <$list filter="[<state>get[mws-latest]!is[blank]] -[<state>get[mws-version]]" variable="latest">
 &#32;<span class="td-mws-update-available">(<<latest>> available)</span>
 </$list>
+<$list filter="[<state>get[sync-user]!is[blank]]" variable="user">
+&#32;· logged in as <<user>>
+</$list>
 <$list filter="[<kind>!match[remote]]" variable="ignore">
 &#32;· last backup:&#32;
 <$list filter="[<state>get[last-backup]!is[blank]]" variable="date" emptyMessage="never">
@@ -93,6 +96,7 @@ MWS is not installed in this folder (node_modules is missing). Use ''repair'' to
 <<section-button backups "Backups">>
 <<section-button maintenance "Updates & maintenance">>
 </$list>
+<<section-button account "Account">>
 <<section-button settings "Settings">>
 <<section-button log "Log">>
 <$button class="tc-btn-invisible td-button td-mws-remove" message="tm-mws-remove" param=<<id>> disabled=<<isBusy>>>remove</$button>
@@ -103,6 +107,9 @@ MWS is not installed in this folder (node_modules is missing). Use ''repair'' to
 </$list>
 <$list filter="[<sectionState>get[text]match[maintenance]]" variable="ignore">
 <$transclude tiddler="MWSServerList/Row/Maintenance" mode="block"/>
+</$list>
+<$list filter="[<sectionState>get[text]match[account]]" variable="ignore">
+<$transclude tiddler="MWSServerList/Row/Account" mode="block"/>
 </$list>
 <$list filter="[<sectionState>get[text]match[settings]]" variable="ignore">
 <$transclude tiddler="MWSServerList/Row/Settings" mode="block"/>

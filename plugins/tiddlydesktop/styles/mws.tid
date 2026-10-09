@@ -219,3 +219,29 @@ button.td-button[disabled] {
 	white-space: pre-wrap;
 	word-break: break-all;
 }
+
+.td-mws-sync-badge {
+	margin-left: 0.5em;
+	font-weight: normal;
+}
+
+.td-mws-sync-ok {
+	background: #2e9e44;
+}
+
+.td-mws-sync-syncing, .td-mws-sync-starting {
+	background: #1f78b4;
+}
+
+.td-mws-sync-error, .td-mws-sync-login {
+	background: #d9342b;
+}
+
+.td-mws-sync-offline, .td-mws-sync-restart {
+	background: #e0a800;
+}
+
+.td-mws-sync-panel {
+	margin-top: 0.5em;
+	max-width: 50em;
+}

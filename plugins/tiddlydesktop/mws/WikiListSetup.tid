@@ -1,0 +1,58 @@
+title: WikiListRow/MWS/Setup
+
+\whitespace trim
+\procedure server-select()
+<$select tiddler=<<form>> field="server">
+<option value="">(choose a server)</option>
+<$list filter="[all[tiddlers]tag[$:/tags/TiddlyDesktop/MWSServer]sort[caption]]">
+<option value={{{ [<currentTiddler>removeprefix[$:/TiddlyDesktop/MWS/Server/]] }}}><$view field="caption"/></option>
+</$list>
+</$select>
+\end
+
+
+<p>
+Publish this wiki to a ~MultiWikiServer, or link it to a wiki that already exists there. ~TiddlyDesktop then keeps both in sync: changes on either side are copied to the other, and if both sides changed the same tiddler, the newer version wins and the other one is kept as a separate "sync conflict" tiddler.
+</p>
+<$list filter="[all[tiddlers]tag[$:/tags/TiddlyDesktop/MWSServer]count[]match[0]]" variable="ignore">
+<p>No MWS server yet. <$button class="td-button" message="tiddlydesktop-add-wiki-url" param="backstage://MWSServerList">Open MWS servers</$button></p>
+</$list>
+<$list filter="[all[tiddlers]tag[$:/tags/TiddlyDesktop/MWSServer]limit[1]]" variable="ignore">
+<$let mode={{{ [<form>get[mode]else[publish]] }}}>
+<p>
+<$radio tiddler=<<form>> field="mode" value="publish" default="publish"> publish as a new wiki</$radio>
+&#32;&#32;
+<$radio tiddler=<<form>> field="mode" value="link" default="publish"> link to an existing wiki</$radio>
+</p>
+<table class="td-mws-table">
+<tr><th>Server</th><td><<server-select>></td></tr>
+<tr><th>Wiki name on the server</th><td><$edit-text tiddler=<<form>> field="recipe" tag="input" class="td-mws-input" placeholder="eg my-notes (letters, digits, - and _)"/></td></tr>
+<$list filter="[<mode>match[publish]]" variable="ignore">
+<tr><th>Description</th><td><$edit-text tiddler=<<form>> field="description" tag="input" class="td-mws-input" placeholder="optional"/></td></tr>
+</$list>
+<$list filter="[<mode>match[link]]" variable="ignore">
+<tr><th>First sync</th><td>
+<$select tiddler=<<form>> field="initial-mode" default="merge">
+<option value="merge">merge: newer version wins, the other is kept as a conflict copy</option>
+<option value="local">this wiki wins where both have the same tiddler</option>
+<option value="remote">the server wins where both have the same tiddler</option>
+</$select>
+</td></tr>
+</$list>
+<tr><th></th><td><$checkbox tiddler=<<form>> field="background" checked="yes" unchecked="no" default="yes"> keep in sync while ~TiddlyDesktop runs, even when the wiki window is closed</$checkbox></td></tr>
+</table>
+<$list filter="[<mode>match[publish]]" variable="ignore">
+<$button class="td-button td-mws-primary">
+<$action-sendmessage $message="tm-mws-publish" $param=<<wikiUrl>> form=<<form>>/>
+Publish
+</$button>
+<span class="tc-muted">&#32;Creates the wiki on the server (you need to be logged in as an administrator, see Account in the MWS servers window) and uploads this wiki. Only this computer and servers managed over SSH can create wikis; for other servers create the wiki on the admin page and link it.</span>
+</$list>
+<$list filter="[<mode>match[link]]" variable="ignore">
+<$button class="td-button td-mws-primary">
+<$action-sendmessage $message="tm-mws-link" $param=<<wikiUrl>> form=<<form>>/>
+Link
+</$button>
+</$list>
+</$let>
+</$list>

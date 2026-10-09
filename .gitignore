@@ -5,4 +5,5 @@ output/
 nwjs/*
 node_modules/
 source/tiddlywiki/
+source/node_modules/
 AGENTS.md

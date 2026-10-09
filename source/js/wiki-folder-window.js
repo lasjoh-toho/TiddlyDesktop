@@ -16,6 +16,7 @@ function WikiFolderWindow(options) {
 	this.info = options.info || {};
 	this.pathname = options.info.pathname;
 	this.mustQuitOnClose = options.mustQuitOnClose;
+	this.hidden = !!options.hidden;
 	// Save the wiki list tiddler
 	this.saveWikiListTiddler();
 	// Get the host, port and credentials
@@ -23,12 +24,14 @@ function WikiFolderWindow(options) {
 		port = $tw.wiki.getTiddlerText(this.getConfigTitle("port"),""),
 		credentials = $tw.wiki.getTiddlerText(this.getConfigTitle("credentials"),"users.csv"),
 		readers = $tw.wiki.getTiddlerText(this.getConfigTitle("readers"),"(anon)"),
-		writers = $tw.wiki.getTiddlerText(this.getConfigTitle("writers"),"(authenticated)");
+		writers = $tw.wiki.getTiddlerText(this.getConfigTitle("writers"),"(authenticated)"),
+		mwsSync = $tw.desktop.mws.sync.getFolderSyncSettings(this.getIdentifier());
 	// Open the window
 	$tw.desktop.gui.Window.open("html/wiki-folder-window.html?pathname=" + encodeURIComponent(this.pathname) + "&host=" + encodeURIComponent(host) + "&port=" + encodeURIComponent(port)
-			+ "&credentials=" + encodeURIComponent(credentials) + "&readers=" + encodeURIComponent(readers) + "&writers=" + encodeURIComponent(writers),{
+			+ "&credentials=" + encodeURIComponent(credentials) + "&readers=" + encodeURIComponent(readers) + "&writers=" + encodeURIComponent(writers)
+			+ (mwsSync ? "&mwssync=" + encodeURIComponent(JSON.stringify(mwsSync)) : ""),{
 		id: hash.simpleHash(this.getIdentifier()),
-		show: true,
+		show: !this.hidden,
 		new_instance: true,
 		icon: "images/app_icon.png"
 	},function(win) {
@@ -66,6 +69,12 @@ WikiFolderWindow.prototype.onloaded = function(event) {
 
 // Reopen this window
 WikiFolderWindow.prototype.reopen = function() {
+	if(this.hidden && this.window_nwjs) {
+		this.hidden = false;
+		this.window_nwjs.show();
+		this.window_nwjs.focus();
+		return;
+	}
 	$tw.desktop.windowList.openByUrl("backstage://Wiki Folder Warning");
 };
 
@@ -92,6 +101,7 @@ WikiFolderWindow.prototype.getWikiFavIconType = function() {
 
 // Close handler for window
 WikiFolderWindow.prototype.onclose = function(event) {
+	$tw.desktop.mws.sync.detach(this.getIdentifier());
 	// Close the window, remove it from the window list
 	this.windowList.handleClose(this);
 };

@@ -189,6 +189,8 @@ TiddlyDesktop can install, run, administer and back up [MultiWikiServer](https:/
 
 The MWS admin page (wikis, templates, bags, users, roles) opens in a TiddlyDesktop window. Backups use the `mws backup-store` command, which copies the database while the server keeps running, and can run automatically on a schedule. Local servers need [Node.js](https://nodejs.org/) 20 or newer.
 
+Wikis in the wiki list can be **published** to an MWS server or **linked** to an existing wiki there. TiddlyDesktop then keeps the local wiki and the MWS wiki in sync in both directions: local changes are uploaded right away, server changes are fetched every few seconds, and when both sides changed the same tiddler the newer version wins while the other is kept as a "sync conflict" copy. Linked wikis can be kept in sync in the background while TiddlyDesktop runs. If Node.js is missing, TiddlyDesktop can download it into its own data folder.
+
 See the "MWS servers" topic in the TiddlyDesktop help for details.
 
 ## Multiple Configurations

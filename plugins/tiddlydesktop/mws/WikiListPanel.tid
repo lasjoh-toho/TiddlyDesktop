@@ -1,0 +1,18 @@
+title: WikiListRow/MWS
+
+\whitespace trim
+<$let
+	wikiUrl=<<currentTiddler>>
+	linkTitle={{{ [<currentTiddler>addprefix[$:/TiddlyDesktop/Config/mws-sync/]] }}}
+	statusTitle={{{ [<currentTiddler>addprefix[$:/temp/TiddlyDesktop/MWS/SyncStatus/]] }}}
+	form={{{ [<currentTiddler>addprefix[$:/temp/TiddlyDesktop/MWS/SyncForm/]] }}}
+>
+<div class="td-wiki-advanced td-mws-sync-panel tc-popup-handle">
+<$list filter="[<linkTitle>has[recipe]]" variable="ignore">
+<$transclude tiddler="WikiListRow/MWS/Linked" mode="block"/>
+</$list>
+<$list filter="[<linkTitle>!has[recipe]]" variable="ignore">
+<$transclude tiddler="WikiListRow/MWS/Setup" mode="block"/>
+</$list>
+</div>
+</$let>

@@ -56,3 +56,47 @@ console.log("Running tiddlywiki " + $tw.boot.argv.join(" "));
 require("../tiddlywiki/boot/boot.js").TiddlyWiki($tw);
 
 $tw.wiki.addTiddler({title: "$:/status/IsReadOnly",text: "no"});
+
+// Keep the wiki in sync with a MultiWikiServer if it is linked to one
+if(queryObject.mwssync) {
+	(function() {
+		var settings = JSON.parse(queryObject.mwssync),
+			client = require("../js/mws/client.js"),
+			SyncEngine = require("../js/mws/sync.js").SyncEngine,
+			sessions = new client.SessionStore(settings.dataPath),
+			stateFolder = path.resolve(settings.dataPath,"mws-sync"),
+			statusFile = path.resolve(stateFolder,settings.id + ".status.json"),
+			triggerFile = path.resolve(stateFolder,settings.id + ".trigger");
+		var engine = new SyncEngine({
+			id: settings.id,
+			wiki: $tw.wiki,
+			Tiddler: $tw.Tiddler,
+			baseUrl: settings.baseUrl,
+			recipe: settings.recipe,
+			getSession: function() {
+				var entry = sessions.get(settings.serverId);
+				return entry ? entry.session : null;
+			},
+			stateFolder: stateFolder,
+			interval: settings.interval,
+			initialMode: settings.initialMode,
+			// The main TiddlyDesktop process reads this file to show the status in the wiki list
+			onStatus: function(status) {
+				status.updated = String(Date.now());
+				fs.mkdirSync(stateFolder,{recursive: true});
+				fs.writeFileSync(statusFile,JSON.stringify(status));
+			},
+			log: function(line) {
+				console.log("[MWS sync] " + line);
+			}
+		});
+		engine.start();
+		// "Sync now" in the wiki list creates the trigger file
+		setInterval(function() {
+			if(fs.existsSync(triggerFile)) {
+				fs.rmSync(triggerFile,{force: true});
+				engine.syncNow();
+			}
+		},2000);
+	})();
+}

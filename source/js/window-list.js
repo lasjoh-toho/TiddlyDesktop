@@ -86,14 +86,17 @@ WindowList.prototype.open = function(WindowConstructor,info,options) {
 	// Check if the window is already open
 	var w = this.find(WindowConstructor,info);
 	if(w) {
-		// If so, just focus it
-		w.reopen(options);
+		// If so, just focus it, unless it only needs to run in the background
+		if(!options.hidden) {
+			w.reopen(options);
+		}
 	} else {
 		// Construct the window and save it
 		w = new WindowConstructor({
 			windowList: this,
 			info: info,
-			mustQuitOnClose: options.mustQuitOnClose
+			mustQuitOnClose: options.mustQuitOnClose,
+			hidden: options.hidden
 		});
 		this.windows.push(w);
 	}
